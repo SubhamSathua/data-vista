@@ -179,6 +179,60 @@ body {
     transform: translateY(-1px);
 }
 
+.expand-btn {
+    margin-bottom: 0.75rem;
+    padding: 0.45rem 0.75rem;
+    background: #ede8f8;
+    color: #2c2550;
+    border: 1px solid #d4cce0;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.expand-btn:hover {
+    background: #e2daf2;
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 11000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-header {
+    width: min(1100px, 92vw);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.modal-title {
+    color: #fff;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.modal-body {
+    width: min(1100px, 92vw);
+    height: min(78vh, 760px);
+    background: #f5f3ec;
+    border-radius: 14px;
+    padding: 1rem;
+}
+
+.modal-chart-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
 .select-group {
     display: flex;
     flex-direction: column;

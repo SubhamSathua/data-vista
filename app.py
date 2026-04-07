@@ -200,10 +200,10 @@ def build_bar_chart(df, category_column, chart_title="Performance"):
     return figure_to_base64(fig)
 
 
-def build_heatmap(df, x_column, y_column, chart_title="Heatmap"):
-    """Build a 2D heatmap that follows selected X and Y columns."""
+def build_scatter_plot(df, x_column, y_column, chart_title="Scatter plot"):
+    """Build a beginner-friendly scatter plot using selected X and Y columns."""
     if x_column is None or y_column is None:
-        return build_message_chart("Select both X and Y for heatmap")
+        return build_message_chart("Select both X and Y for scatter plot")
 
     x_series, x_error = get_column_as_series(df, x_column)
     if x_error is not None:
@@ -213,45 +213,29 @@ def build_heatmap(df, x_column, y_column, chart_title="Heatmap"):
     if y_error is not None:
         return build_message_chart(y_error)
 
-    x_numeric = pd.to_numeric(x_series, errors="coerce")
     y_numeric = pd.to_numeric(y_series, errors="coerce")
 
+    # Keep X as-is when numeric; otherwise treat it as category labels.
+    if pd.api.types.is_numeric_dtype(x_series):
+        x_values = pd.to_numeric(x_series, errors="coerce")
+    else:
+        x_values = x_series.astype(str)
+
+    plot_df = pd.DataFrame({"x": x_values, "y": y_numeric}).dropna()
+    if plot_df.empty:
+        return build_message_chart("Scatter plot needs valid X values and numeric Y values")
+
+    # Keep it readable for large files.
+    plot_df = plot_df.head(2000)
+
     fig, ax = plt.subplots(figsize=(5.0, 3.8))
+    sns.scatterplot(data=plot_df, x="x", y="y", s=26, alpha=0.75, color="#9b7edb", ax=ax)
+    ax.set_title(chart_title)
+    ax.set_xlabel(x_column)
+    ax.set_ylabel(y_column)
 
-    # Case 1: numeric X and numeric Y -> regular 2D histogram heatmap.
-    numeric_pair_df = pd.DataFrame({"x": x_numeric, "y": y_numeric}).dropna()
-    if not numeric_pair_df.empty:
-        sns.histplot(data=numeric_pair_df, x="x", y="y", bins=20, cbar=True, cmap="Purples", ax=ax)
-        ax.set_title(chart_title)
-        ax.set_xlabel(x_column)
-        ax.set_ylabel(y_column)
-        return figure_to_base64(fig)
-
-    # Case 2: categorical X and numeric Y -> frequency heatmap by category and Y bins.
-    categorical_x = x_series.astype(str)
-    mixed_df = pd.DataFrame({"x": categorical_x, "y": y_numeric}).dropna()
-    if mixed_df.empty:
-        return build_message_chart("Heatmap needs numeric Y and valid X values")
-
-    top_categories = mixed_df["x"].value_counts().head(20).index
-    mixed_df = mixed_df[mixed_df["x"].isin(top_categories)]
-    if mixed_df.empty:
-        return build_message_chart("No values available for selected heatmap axes")
-
-    try:
-        mixed_df["y_bin"] = pd.cut(mixed_df["y"], bins=10, include_lowest=True, duplicates="drop")
-        heatmap_df = pd.crosstab(mixed_df["x"], mixed_df["y_bin"])
-        if heatmap_df.empty:
-            return build_message_chart("No values available for selected heatmap axes")
-
-        sns.heatmap(heatmap_df, cmap="Purples", cbar=True, ax=ax)
-        ax.set_title(chart_title)
-        ax.set_xlabel(y_column)
-        ax.set_ylabel(x_column)
+    if not pd.api.types.is_numeric_dtype(x_series):
         ax.tick_params(axis="x", rotation=35)
-        ax.tick_params(axis="y", rotation=0)
-    except Exception:
-        return build_message_chart("Could not build heatmap for selected X and Y")
 
     return figure_to_base64(fig)
 
@@ -366,7 +350,7 @@ def build_chart_titles(category_column, x_column, y_column):
     pie_title = "Distribution"
     line_title = "Trend"
     bar_title = "Performance"
-    hist_title = "Heatmap"
+    hist_title = "Scatter plot"
 
     if category_column not in [None, ""]:
         pie_title = f"Distribution by {category_column}"
@@ -376,7 +360,7 @@ def build_chart_titles(category_column, x_column, y_column):
         line_title = f"{y_column} by {x_column}"
 
     if x_column not in [None, ""] and y_column not in [None, ""]:
-        hist_title = f"Heatmap of {y_column} vs {x_column}"
+        hist_title = f"Scatter plot of {y_column} vs {x_column}"
 
     return pie_title, line_title, bar_title, hist_title
 
@@ -528,7 +512,8 @@ app.layout = html.Div(
                                     ),
                                     html.Div(
                                         [
-                                            html.Div("Heatmap", id="hist-title", className="section-title"),
+                                            html.Div("Scatter plot", id="hist-title", className="section-title"),
+                                            html.Button("Open Large View", id="hist-open-btn", className="expand-btn"),
                                             html.Div(
                                                 [html.Img(id="hist-chart", className="dash-chart-img")],
                                                 className="hist-container",
@@ -541,6 +526,24 @@ app.layout = html.Div(
                             ),
                         ],
                         className="container",
+                    ),
+                    html.Div(
+                        [
+                            html.Div(
+                                [
+                                    html.Div("Scatter Plot - Large View", className="modal-title"),
+                                    html.Button("Close", id="hist-modal-close", className="expand-btn"),
+                                ],
+                                className="modal-header",
+                            ),
+                            html.Div(
+                                [html.Img(id="hist-modal-img", className="modal-chart-img")],
+                                className="modal-body",
+                            ),
+                        ],
+                        id="hist-modal",
+                        className="modal-overlay",
+                        style={"display": "none"},
                     ),
                 ],
                 className="app-shell",
@@ -641,6 +644,7 @@ def update_data_state(uploaded_contents, uploaded_filename):
     Output("line-chart", "src"),
     Output("bar-chart", "src"),
     Output("hist-chart", "src"),
+    Output("hist-modal-img", "src"),
     Output("summary-title", "children"),
     Output("summary-list", "children"),
     Input("stored-data", "data"),
@@ -655,7 +659,8 @@ def update_charts(stored_data, row_limit_select, line_x_column, line_y_column):
             "Distribution",
             "Trend",
             "Performance",
-            "Heatmap",
+            "Scatter plot",
+            empty_message,
             empty_message,
             empty_message,
             empty_message,
@@ -683,7 +688,8 @@ def update_charts(stored_data, row_limit_select, line_x_column, line_y_column):
                 "Distribution",
                 "Trend",
                 "Performance",
-                "Heatmap",
+                "Scatter plot",
+                error_chart,
                 error_chart,
                 error_chart,
                 error_chart,
@@ -699,7 +705,8 @@ def update_charts(stored_data, row_limit_select, line_x_column, line_y_column):
                 "Distribution",
                 "Trend",
                 "Performance",
-                "Heatmap",
+                "Scatter plot",
+                error_chart,
                 error_chart,
                 error_chart,
                 error_chart,
@@ -718,18 +725,31 @@ def update_charts(stored_data, row_limit_select, line_x_column, line_y_column):
         pie_src = build_pie_chart(used_df, category_column, chart_title=pie_title)
         line_src = build_line_chart(used_df, line_x_column, line_y_column, chart_title=line_title)
         bar_src = build_bar_chart(used_df, category_column, chart_title=bar_title)
-        hist_src = build_heatmap(used_df, line_x_column, line_y_column, chart_title=hist_title)
+        hist_src = build_scatter_plot(used_df, line_x_column, line_y_column, chart_title=hist_title)
         summary_title = build_summary_title(category_column, line_y_column)
         summary_items = build_summary_list(used_df, category_column, line_y_column)
 
-        return pie_title, line_title, bar_title, hist_title, pie_src, line_src, bar_src, hist_src, summary_title, summary_items
+        return (
+            pie_title,
+            line_title,
+            bar_title,
+            hist_title,
+            pie_src,
+            line_src,
+            bar_src,
+            hist_src,
+            hist_src,
+            summary_title,
+            summary_items,
+        )
     except Exception as error:
         error_chart = build_message_chart(f"Chart callback error: {error}")
         return (
             "Distribution",
             "Trend",
             "Performance",
-            "Heatmap",
+            "Scatter plot",
+            error_chart,
             error_chart,
             error_chart,
             error_chart,
@@ -737,6 +757,21 @@ def update_charts(stored_data, row_limit_select, line_x_column, line_y_column):
             "Top 5 summary",
             [html.Li(f"Summary error: {error}", className="summary-item")],
         )
+
+
+@app.callback(
+    Output("hist-modal", "style"),
+    Input("hist-open-btn", "n_clicks"),
+    Input("hist-modal-close", "n_clicks"),
+)
+def toggle_hist_modal(open_clicks, close_clicks):
+    open_count = 0 if open_clicks is None else open_clicks
+    close_count = 0 if close_clicks is None else close_clicks
+
+    if open_count > close_count:
+        return {"display": "flex"}
+
+    return {"display": "none"}
 
 
 if __name__ == "__main__":
