@@ -200,36 +200,31 @@ def build_bar_chart(df, category_column, chart_title="Performance"):
     return figure_to_base64(fig)
 
 
-def build_histogram(df, numeric_column, chart_title="Histogram"):
-    """Build a histogram for selected numeric column."""
-    if numeric_column is None:
-        return build_message_chart("Pick a numeric column for Histplot")
+def build_heatmap(df, x_column, y_column, chart_title="Heatmap"):
+    """Build a 2D heatmap that follows selected X and Y columns."""
+    if x_column is None or y_column is None:
+        return build_message_chart("Select both X and Y for heatmap")
 
-    numeric_series, series_error = get_column_as_series(df, numeric_column)
-    if series_error is not None:
-        return build_message_chart(series_error)
+    x_series, x_error = get_column_as_series(df, x_column)
+    if x_error is not None:
+        return build_message_chart(x_error)
 
-    numeric_series = pd.to_numeric(numeric_series, errors="coerce")
-    clean_series = numeric_series.dropna()
+    y_series, y_error = get_column_as_series(df, y_column)
+    if y_error is not None:
+        return build_message_chart(y_error)
 
-    if clean_series.empty:
-        return build_message_chart("No numeric values available for Histplot")
+    x_numeric = pd.to_numeric(x_series, errors="coerce")
+    y_numeric = pd.to_numeric(y_series, errors="coerce")
+
+    pair_df = pd.DataFrame({"x": x_numeric, "y": y_numeric}).dropna()
+    if pair_df.empty:
+        return build_message_chart("Heatmap needs numeric X and Y columns")
 
     fig, ax = plt.subplots(figsize=(5.0, 3.8))
-
-    # For low-cardinality integer data (for example 0-7), use discrete bins so
-    # the plot remains a true histogram while being visually clear.
-    is_integer_like = (clean_series % 1 == 0).all()
-    unique_count = clean_series.nunique()
-
-    if is_integer_like and unique_count <= 30:
-        sns.histplot(clean_series, discrete=True, kde=False, ax=ax, color="#9b7edb")
-    else:
-        sns.histplot(clean_series, bins=16, kde=False, ax=ax, color="#9b7edb")
-
+    sns.histplot(data=pair_df, x="x", y="y", bins=20, cbar=True, cmap="Purples", ax=ax)
     ax.set_title(chart_title)
-    ax.set_xlabel(numeric_column)
-    ax.set_ylabel("Count")
+    ax.set_xlabel(x_column)
+    ax.set_ylabel(y_column)
 
     return figure_to_base64(fig)
 
@@ -344,7 +339,7 @@ def build_chart_titles(category_column, x_column, y_column):
     pie_title = "Distribution"
     line_title = "Trend"
     bar_title = "Performance"
-    hist_title = "Histogram"
+    hist_title = "Heatmap"
 
     if category_column not in [None, ""]:
         pie_title = f"Distribution by {category_column}"
@@ -353,8 +348,8 @@ def build_chart_titles(category_column, x_column, y_column):
     if x_column not in [None, ""] and y_column not in [None, ""]:
         line_title = f"{y_column} by {x_column}"
 
-    if y_column not in [None, ""]:
-        hist_title = f"Histogram of {y_column}"
+    if x_column not in [None, ""] and y_column not in [None, ""]:
+        hist_title = f"Heatmap of {y_column} vs {x_column}"
 
     return pie_title, line_title, bar_title, hist_title
 
@@ -506,7 +501,7 @@ app.layout = html.Div(
                                     ),
                                     html.Div(
                                         [
-                                            html.Div("Histogram", id="hist-title", className="section-title"),
+                                            html.Div("Heatmap", id="hist-title", className="section-title"),
                                             html.Div(
                                                 [html.Img(id="hist-chart", className="dash-chart-img")],
                                                 className="hist-container",
@@ -633,7 +628,7 @@ def update_charts(stored_data, row_limit_select, line_x_column, line_y_column):
             "Distribution",
             "Trend",
             "Performance",
-            "Histogram",
+            "Heatmap",
             empty_message,
             empty_message,
             empty_message,
@@ -661,7 +656,7 @@ def update_charts(stored_data, row_limit_select, line_x_column, line_y_column):
                 "Distribution",
                 "Trend",
                 "Performance",
-                "Histogram",
+                "Heatmap",
                 error_chart,
                 error_chart,
                 error_chart,
@@ -677,7 +672,7 @@ def update_charts(stored_data, row_limit_select, line_x_column, line_y_column):
                 "Distribution",
                 "Trend",
                 "Performance",
-                "Histogram",
+                "Heatmap",
                 error_chart,
                 error_chart,
                 error_chart,
@@ -696,7 +691,7 @@ def update_charts(stored_data, row_limit_select, line_x_column, line_y_column):
         pie_src = build_pie_chart(used_df, category_column, chart_title=pie_title)
         line_src = build_line_chart(used_df, line_x_column, line_y_column, chart_title=line_title)
         bar_src = build_bar_chart(used_df, category_column, chart_title=bar_title)
-        hist_src = build_histogram(used_df, line_y_column, chart_title=hist_title)
+        hist_src = build_heatmap(used_df, line_x_column, line_y_column, chart_title=hist_title)
         summary_title = build_summary_title(category_column, line_y_column)
         summary_items = build_summary_list(used_df, category_column, line_y_column)
 
@@ -707,7 +702,7 @@ def update_charts(stored_data, row_limit_select, line_x_column, line_y_column):
             "Distribution",
             "Trend",
             "Performance",
-            "Histogram",
+            "Heatmap",
             error_chart,
             error_chart,
             error_chart,
