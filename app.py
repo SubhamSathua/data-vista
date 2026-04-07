@@ -5,7 +5,6 @@ import dash
 from dash import dcc, html, Input, Output, State
 import matplotlib
 
-# Use a non-GUI backend so Dash can generate charts safely in server threads.
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -215,7 +214,6 @@ def build_scatter_plot(df, x_column, y_column, chart_title="Scatter plot"):
 
     y_numeric = pd.to_numeric(y_series, errors="coerce")
 
-    # Keep X as-is when numeric; otherwise treat it as category labels.
     if pd.api.types.is_numeric_dtype(x_series):
         x_values = pd.to_numeric(x_series, errors="coerce")
     else:
@@ -225,7 +223,6 @@ def build_scatter_plot(df, x_column, y_column, chart_title="Scatter plot"):
     if plot_df.empty:
         return build_message_chart("Scatter plot needs valid X values and numeric Y values")
 
-    # Keep it readable for large files.
     plot_df = plot_df.head(2000)
 
     fig, ax = plt.subplots(figsize=(5.0, 3.8))
