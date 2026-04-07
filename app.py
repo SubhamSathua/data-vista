@@ -216,15 +216,42 @@ def build_heatmap(df, x_column, y_column, chart_title="Heatmap"):
     x_numeric = pd.to_numeric(x_series, errors="coerce")
     y_numeric = pd.to_numeric(y_series, errors="coerce")
 
-    pair_df = pd.DataFrame({"x": x_numeric, "y": y_numeric}).dropna()
-    if pair_df.empty:
-        return build_message_chart("Heatmap needs numeric X and Y columns")
-
     fig, ax = plt.subplots(figsize=(5.0, 3.8))
-    sns.histplot(data=pair_df, x="x", y="y", bins=20, cbar=True, cmap="Purples", ax=ax)
-    ax.set_title(chart_title)
-    ax.set_xlabel(x_column)
-    ax.set_ylabel(y_column)
+
+    # Case 1: numeric X and numeric Y -> regular 2D histogram heatmap.
+    numeric_pair_df = pd.DataFrame({"x": x_numeric, "y": y_numeric}).dropna()
+    if not numeric_pair_df.empty:
+        sns.histplot(data=numeric_pair_df, x="x", y="y", bins=20, cbar=True, cmap="Purples", ax=ax)
+        ax.set_title(chart_title)
+        ax.set_xlabel(x_column)
+        ax.set_ylabel(y_column)
+        return figure_to_base64(fig)
+
+    # Case 2: categorical X and numeric Y -> frequency heatmap by category and Y bins.
+    categorical_x = x_series.astype(str)
+    mixed_df = pd.DataFrame({"x": categorical_x, "y": y_numeric}).dropna()
+    if mixed_df.empty:
+        return build_message_chart("Heatmap needs numeric Y and valid X values")
+
+    top_categories = mixed_df["x"].value_counts().head(20).index
+    mixed_df = mixed_df[mixed_df["x"].isin(top_categories)]
+    if mixed_df.empty:
+        return build_message_chart("No values available for selected heatmap axes")
+
+    try:
+        mixed_df["y_bin"] = pd.cut(mixed_df["y"], bins=10, include_lowest=True, duplicates="drop")
+        heatmap_df = pd.crosstab(mixed_df["x"], mixed_df["y_bin"])
+        if heatmap_df.empty:
+            return build_message_chart("No values available for selected heatmap axes")
+
+        sns.heatmap(heatmap_df, cmap="Purples", cbar=True, ax=ax)
+        ax.set_title(chart_title)
+        ax.set_xlabel(y_column)
+        ax.set_ylabel(x_column)
+        ax.tick_params(axis="x", rotation=35)
+        ax.tick_params(axis="y", rotation=0)
+    except Exception:
+        return build_message_chart("Could not build heatmap for selected X and Y")
 
     return figure_to_base64(fig)
 
