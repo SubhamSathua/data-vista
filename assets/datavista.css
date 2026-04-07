@@ -1,0 +1,366 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: #dcd4e8;
+    min-height: 100vh;
+}
+
+.header {
+    background: #f5f3ec;
+    padding: 1.25rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.logo {
+    width: 42px;
+    height: 42px;
+    background: #000;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: white;
+    font-size: 18px;
+}
+
+.brand-name {
+    font-size: 22px;
+    font-weight: 600;
+    color: #1a1a1a;
+    letter-spacing: -0.3px;
+}
+
+.container {
+    display: flex;
+    height: calc(100vh - 82px);
+    overflow: hidden;
+}
+
+.dashboard {
+    width: 70%;
+    padding: 1.75rem;
+    overflow-y: auto;
+}
+
+.side-config {
+    width: 30%;
+    background: #f5f3ec;
+    padding: 1.75rem;
+    overflow-y: auto;
+}
+
+.dashboard-row {
+    display: grid;
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
+}
+
+.row-2-cols {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.card {
+    background: #f5f3ec;
+    border-radius: 24px;
+    padding: 1.75rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.card-header {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.card-header::after {
+    content: '···';
+    color: #999;
+    font-size: 20px;
+    letter-spacing: 2px;
+}
+
+.chart-container {
+    position: relative;
+    height: 280px;
+}
+
+.summary-list {
+    list-style: none;
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    margin-bottom: 0.625rem;
+    background: #e9e4f7;
+    border-radius: 16px;
+    transition: all 0.2s ease;
+}
+
+.summary-item:last-child {
+    margin-bottom: 0;
+}
+
+.summary-item:hover {
+    background: #dfd8f0;
+    transform: translateX(2px);
+}
+
+.item-left {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+}
+
+.item-icon {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.item-icon.purple { background: #9b7edb; }
+.item-icon.pink { background: #e89fc9; }
+.item-icon.yellow { background: #f4d663; }
+.item-icon.green { background: #8bc88b; }
+.item-icon.blue { background: #8fb9e8; }
+
+.item-name {
+    font-weight: 500;
+    color: #1a1a1a;
+    font-size: 14px;
+}
+
+.item-value {
+    font-weight: 600;
+    color: #1a1a1a;
+    font-size: 14px;
+}
+
+.config-section {
+    margin-bottom: 2rem;
+}
+
+.section-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 1rem;
+}
+
+.import-btn {
+    width: 100%;
+    padding: 1rem;
+    background: #9b7edb;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.import-btn:hover {
+    background: #8a6dc9;
+    transform: translateY(-1px);
+}
+
+.select-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+select {
+    padding: 0.875rem;
+    border: 1px solid #d4cce0;
+    border-radius: 10px;
+    font-size: 14px;
+    color: #1a1a1a;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+select:hover {
+    border-color: #9b7edb;
+}
+
+select:focus {
+    outline: none;
+    border-color: #9b7edb;
+    box-shadow: 0 0 0 3px rgba(155, 126, 219, 0.1);
+}
+
+.data-table {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 12px;
+    background: white;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+th {
+    background: #f5f3ec;
+    color: #666;
+    padding: 0.875rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    border-bottom: 1px solid #e6e0f0;
+}
+
+td {
+    padding: 0.875rem;
+    border-bottom: 1px solid #f0ecf7;
+    color: #1a1a1a;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+tr:hover td {
+    background: #faf9fc;
+}
+
+.hist-container {
+    margin-top: 1rem;
+    position: relative;
+    height: 240px;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(155, 126, 219, 0.3);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(155, 126, 219, 0.5);
+}
+
+/* Minimal Dash compatibility helpers for image-based charts and status text. */
+.dash-chart-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.status-text {
+    margin-top: 0.5rem;
+    color: #666;
+    font-size: 12px;
+    word-break: break-word;
+}
+
+.select-label {
+    display: block;
+    font-size: 13px;
+    color: #1a1a1a;
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+}
+
+.select-field {
+    display: block;
+}
+
+.select-demo-text {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 0.35rem;
+}
+
+/* Dash dropdown compatibility styled like native select. */
+.select-group .Select-control {
+    padding: 0.2rem 0.3rem;
+    border: 1px solid #d4cce0;
+    border-radius: 10px;
+    font-size: 14px;
+    color: #1a1a1a;
+    background: white;
+    min-height: 44px;
+    box-shadow: none;
+}
+
+.select-group .Select-control:hover {
+    border-color: #9b7edb;
+}
+
+.select-group .Select.is-focused > .Select-control {
+    outline: none;
+    border-color: #9b7edb;
+    box-shadow: 0 0 0 3px rgba(155, 126, 219, 0.1);
+}
+
+.select-group .Select-placeholder,
+.select-group .Select-value-label,
+.select-group .Select-input > input {
+    color: #1a1a1a;
+    font-size: 14px;
+}
+
+/* Keep loader visible above all dashboard cards while callbacks are updating. */
+#global-loading {
+    width: 0 !important;
+    height: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    transform: none !important;
+    top: auto !important;
+    left: auto !important;
+    position: absolute !important;
+    pointer-events: none;
+    z-index: 10000 !important;
+}
+
+#global-loading[style*="visibility: visible"] {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 100px !important;
+    height: 100px !important;
+    background: #dcd4e881 !important;
+    border-radius: 14px;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+#global-loading .dash-spinner,
+#global-loading .dash-spinner-container {
+    z-index: 10001 !important;
+}
