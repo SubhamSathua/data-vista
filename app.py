@@ -19,7 +19,7 @@ app.title = "DataVista Dashboard"
 
 
 def parse_uploaded_csv(contents):
-    """Convert the uploaded CSV content into a pandas DataFrame."""
+    
     if contents is None:
         return None, "No file uploaded yet."
 
@@ -35,7 +35,7 @@ def parse_uploaded_csv(contents):
 
 
 def figure_to_base64(fig):
-    """Turn a Matplotlib figure into a base64 image string for Dash html.Img."""
+    
     buffer = io.BytesIO()
     fig.savefig(buffer, format="png", bbox_inches="tight")
     buffer.seek(0)
@@ -45,7 +45,7 @@ def figure_to_base64(fig):
 
 
 def build_message_chart(message):
-    """Create a simple image that explains why a chart is unavailable."""
+    
     fig, ax = plt.subplots(figsize=(5.0, 3.6))
     ax.axis("off")
     ax.text(0.5, 0.5, message, ha="center", va="center", fontsize=12)
@@ -53,7 +53,7 @@ def build_message_chart(message):
 
 
 def get_column_as_series(df, column_name):
-    """Return a selected column as a guaranteed 1D pandas Series."""
+    
     if column_name is None:
         return None, "Column name is empty"
 
@@ -78,7 +78,7 @@ def get_column_as_series(df, column_name):
 
 
 def create_preview_table(df, max_rows=5):
-    """Create a simple HTML table with the first rows of the DataFrame."""
+    
     shown_df = df.head(max_rows)
 
     header_row = html.Tr([html.Th(column_name) for column_name in shown_df.columns])
@@ -92,7 +92,7 @@ def create_preview_table(df, max_rows=5):
 
 
 def find_chart_columns(df):
-    """Pick one categorical column and one numeric column for charts."""
+    
     categorical_columns = []
     numeric_columns = []
 
@@ -122,7 +122,7 @@ def find_chart_columns(df):
 
 
 def pick_line_columns(df):
-    """Choose default X and Y columns for line chart."""
+    
     x_column = None
     y_column = None
 
@@ -138,7 +138,7 @@ def pick_line_columns(df):
 
 
 def apply_row_limit(df, row_limit_value):
-    """Apply row limit from select input."""
+    
     if row_limit_value in [None, "all", ""]:
         return df.copy()
 
@@ -152,7 +152,7 @@ def apply_row_limit(df, row_limit_value):
 
 
 def build_pie_chart(df, category_column, chart_title="Distribution"):
-    """Build a pie chart using selected categorical column."""
+    
     if category_column is None:
         return build_message_chart("Pick a category column for Pie chart")
 
@@ -174,7 +174,7 @@ def build_pie_chart(df, category_column, chart_title="Distribution"):
 
 
 def build_bar_chart(df, category_column, chart_title="Performance"):
-    """Build a bar chart for category counts."""
+    
     if category_column is None:
         return build_message_chart("Pick a category column for Bar chart")
 
@@ -200,7 +200,7 @@ def build_bar_chart(df, category_column, chart_title="Performance"):
 
 
 def build_scatter_plot(df, x_column, y_column, chart_title="Scatter plot"):
-    """Build a beginner-friendly scatter plot using selected X and Y columns."""
+    
     if x_column is None or y_column is None:
         return build_message_chart("Select both X and Y for scatter plot")
 
@@ -238,7 +238,7 @@ def build_scatter_plot(df, x_column, y_column, chart_title="Scatter plot"):
 
 
 def build_line_chart(df, x_column, y_column, chart_title="Trend"):
-    """Build a line chart from selected X and Y columns."""
+    
     if x_column is None or y_column is None:
         return build_message_chart("Pick both X and Y columns for Line chart")
 
@@ -285,7 +285,7 @@ def build_line_chart(df, x_column, y_column, chart_title="Trend"):
 
 
 def build_summary_list(df, category_column, numeric_column):
-    """Build top-5 summary list card items."""
+    
     if category_column is None:
         return [html.Li("Upload data to see summary", className="summary-item")]
 
@@ -335,7 +335,7 @@ def build_summary_list(df, category_column, numeric_column):
 
 
 def build_summary_title(category_column, numeric_column):
-    """Build a clear summary title using selected columns."""
+    
     if category_column in [None, ""] or numeric_column in [None, ""]:
         return "Top 5 summary"
 
@@ -343,7 +343,7 @@ def build_summary_title(category_column, numeric_column):
 
 
 def build_chart_titles(category_column, x_column, y_column):
-    """Build dynamic, beginner-friendly chart titles from selected columns."""
+    
     pie_title = "Distribution"
     line_title = "Trend"
     bar_title = "Performance"
