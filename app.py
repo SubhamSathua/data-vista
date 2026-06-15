@@ -482,14 +482,14 @@ app.layout = html.Div(
                                                     ),
                                                     html.Div(
                                                         [
-                                                            html.Div("X-axis", className="select-label"),
+                                                            html.Div("Group By (X-axis)", className="select-label"),
                                                             dcc.Dropdown(id="line-x-column", options=[], value="", clearable=False),
                                                         ],
                                                         className="select-field",
                                                     ),
                                                     html.Div(
                                                         [
-                                                            html.Div("Y-axis", className="select-label"),
+                                                            html.Div("Value (Y-axis)", className="select-label"),
                                                             dcc.Dropdown(id="line-y-column", options=[], value="", clearable=False),
                                                         ],
                                                         className="select-field",
