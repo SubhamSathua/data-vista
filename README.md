@@ -9,7 +9,7 @@ This tool is for users who need a fast way to visualize data from a CSV file. In
 
 ---
 
-## # Index
+## Index
 - [Features](#features)
 - [Installation and Setup](#how-to-install)
 - [How to Use](#how-to-use)
@@ -18,7 +18,7 @@ This tool is for users who need a fast way to visualize data from a CSV file. In
 
 ---
 
-## # Features
+## Features
 - **CSV Import:** Easily upload any CSV file for instant processing.
 - **Dataset Analysis:** View row counts, column counts, missing values, and duplicates.
 - **Dynamic Selection:** Choose X and Y axes to customize visualizations.
@@ -28,7 +28,7 @@ This tool is for users who need a fast way to visualize data from a CSV file. In
 
 ---
 
-## # How to install
+## How to Install
 
 1.  **Clone the Repository:**
     ```bash
@@ -47,7 +47,7 @@ This tool is for users who need a fast way to visualize data from a CSV file. In
 
 ---
 
-## # How to Use
+## How to Use
 
 1.  **Run the Application:**
     ```bash
@@ -60,15 +60,15 @@ This tool is for users who need a fast way to visualize data from a CSV file. In
 
 ---
 
-## # Requirements
+## Requirements
 - **OS:** Windows, macOS, or Linux.
 - **Python:** Python 3.10 or higher.
 - **Libraries:** Dash, Pandas, Matplotlib, Seaborn.
 
 ---
 
-## # License
-This project is licensed under the MIT License.
+## License
+This project is licensed under the [MIT License](LICENSE).
 
 ---
 Copyright © 2026 Subham Kumar Sathua.
