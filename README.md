@@ -30,12 +30,17 @@ This tool is for users who need a fast way to visualize data from a CSV file. In
 
 ## # How to install
 
-1.  **Environment Setup:** Create and activate a virtual environment:
+1.  **Clone the Repository:**
+    ```bash
+    git clone https://github.com/SubhamSathua/DAVP-Project.git
+    cd DAVP-Project
+    ```
+2.  **Environment Setup:** Create and activate a virtual environment:
     ```bash
     python -m venv .venv
     .venv\Scripts\activate
     ```
-2.  **Install Dependencies:**
+3.  **Install Dependencies:**
     ```bash
     pip install -r requirements.txt
     ```
@@ -63,7 +68,7 @@ This tool is for users who need a fast way to visualize data from a CSV file. In
 ---
 
 ## # License
-This project is licensed under the Apache License 2.0.
+This project is licensed under the MIT License.
 
 ---
 Copyright © 2026 Subham Kumar Sathua.
