@@ -32,8 +32,8 @@ This tool is for users who need a fast way to visualize data from a CSV file. In
 
 1.  **Clone the Repository:**
     ```bash
-    git clone https://github.com/SubhamSathua/DAVP-Project.git
-    cd DAVP-Project
+    https://github.com/SubhamSathua/data-vista.git
+    cd data-vista
     ```
 2.  **Environment Setup:** Create and activate a virtual environment:
     ```bash
