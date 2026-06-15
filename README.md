@@ -10,11 +10,21 @@ This tool is for users who need a fast way to visualize data from a CSV file. In
 ---
 
 ## Index
+- [Tech Stack](#tech-stack)
 - [Features](#features)
 - [Installation and Setup](#how-to-install)
 - [How to Use](#how-to-use)
 - [Requirements](#requirements)
 - [License](#license)
+
+---
+
+## Tech Stack
+- **Core Language:** Python 3.10+
+- **Web Framework:** Dash (Plotly)
+- **Data Manipulation:** Pandas
+- **Visualization:** Matplotlib, Seaborn
+- **Styling:** Vanilla CSS, Assets (Logo, Favicon)
 
 ---
 
@@ -25,6 +35,8 @@ This tool is for users who need a fast way to visualize data from a CSV file. In
 - **Automated Charts:** Generates Pie, Line, Bar, and Scatter plots automatically.
 - **Data Preview:** Quick view of the first few rows of your dataset.
 - **Summary List:** Highlights top values based on selected categories.
+
+<img src = "assets/screenshot.jpg">
 
 ---
 
